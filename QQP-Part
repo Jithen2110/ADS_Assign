@@ -1,0 +1,112 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled7.ipynb",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Jithen2110/ADS_Assign/blob/master/QQP-Part\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "CTOatCPLB_my",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "u6MTimx2mvKo",
+        "colab_type": "code",
+        "outputId": "e3119c4e-ba86-40b6-d991-c6c047603ba5",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 170
+        }
+      },
+      "source": [
+        "import os\n",
+        "import sys\n",
+        "import json\n",
+        "import datetime\n",
+        "import pprint\n",
+        "import tensorflow as tf\n",
+        "\n",
+        "# Authenticate, so we can access storage bucket and TPU\n",
+        "from google.colab import auth\n",
+        "auth.authenticate_user()\n",
+        "\n",
+        "# If you want to use TPU, first switch to tpu runtime in colab\n",
+        "USE_TPU = True #@param{type:\"boolean\"}\n",
+        "\n",
+        "# We will use base uncased bert model, you can give try with large models\n",
+        "# For large model TPU is necessary\n",
+        "BERT_MODEL = 'uncased_L-12_H-768_A-12' #@param {type:\"string\"}\n",
+        "\n",
+        "# BERT checkpoint bucket\n",
+        "BERT_PRETRAINED_DIR = 'gs://cloud-tpu-checkpoints/bert/' + BERT_MODEL\n",
+        "print('***** BERT pretrained directory: {} *****'.format(BERT_PRETRAINED_DIR))\n",
+        "!gsutil ls $BERT_PRETRAINED_DIR\n",
+        "\n",
+        "# Bucket for saving checkpoints and outputs\n",
+        "BUCKET = 'quorabert' #@param {type:\"string\"}\n",
+        "if BUCKET!=\"\":\n",
+        "  OUTPUT_DIR = 'gs://{}/outputs'.format(BUCKET)\n",
+        "  tf.gfile.MakeDirs(OUTPUT_DIR)\n",
+        "elif USE_TPU:\n",
+        "  raise ValueError('Must specify an existing GCS bucket name for running on TPU')\n",
+        "else:\n",
+        "  OUTPUT_DIR = 'out_dir'\n",
+        "  os.mkdir(OUTPUT_DIR)\n",
+        "print('***** Model output directory: {} *****'.format(OUTPUT_DIR))\n",
+        "\n",
+        "if USE_TPU:\n",
+        "  # getting info on TPU runtime\n",
+        "  assert 'COLAB_TPU_ADDR' in os.environ, 'ERROR: Not connected to a TPU runtime; Change notebook runtype to TPU'\n",
+        "  TPU_ADDRESS = 'grpc://' + os.environ['COLAB_TPU_ADDR']\n",
+        "  print('TPU address is', TPU_ADDRESS)\n"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "***** BERT pretrained directory: gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12 *****\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/bert_config.json\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/bert_model.ckpt.data-00000-of-00001\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/bert_model.ckpt.index\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/bert_model.ckpt.meta\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/checkpoint\n",
+            "gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12/vocab.txt\n",
+            "***** Model output directory: gs://quorabert/outputs *****\n",
+            "TPU address is grpc://10.3.4.202:8470\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    }
+  ]
+}
